@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Poker Game Presentation Rubric</title>
+  <style>
+    :root {
+      --felt: #0f5d50;
+      --felt-dark: #073b35;
+      --ink: #17201d;
+      --muted: #5b6863;
+      --paper: #f7f4ea;
+      --panel: #fffdf6;
+      --gold: #d7a842;
+      --red: #b8453b;
+      --line: #ded7c3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 30% 20%, #1d7766 0, var(--felt) 28%, var(--felt-dark) 100%);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .deck {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    .slide {
+      display: none;
+      width: min(1180px, calc(100vw - 56px));
+      height: min(664px, calc(100vh - 112px));
+      margin: 28px auto 10px;
+      background: var(--paper);
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: 0 28px 70px rgba(0,0,0,.33);
+      padding: 54px 62px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 12px;
+      background: linear-gradient(90deg, var(--gold), var(--red), var(--felt));
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-size: 15px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 5vw, 78px);
+      line-height: .98;
+      max-width: 980px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 44px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.35;
+      color: var(--muted);
+      max-width: 900px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 26px;
+      display: grid;
+      gap: 12px;
+      font-size: 25px;
+      line-height: 1.25;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--felt-dark);
+      padding: 12px 18px;
+      border: 2px solid var(--felt);
+      border-radius: 8px;
+      background: #eff8f2;
+      width: fit-content;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #efe8d4;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: var(--felt-dark);
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td:last-child, th:last-child { text-align: right; white-space: nowrap; }
+
+    .hero {
+      justify-content: center;
+      background:
+        linear-gradient(rgba(247,244,234,.9), rgba(247,244,234,.94)),
+        repeating-linear-gradient(45deg, transparent 0 16px, rgba(15,93,80,.08) 16px 32px);
+    }
+
+    .chips {
+      position: absolute;
+      right: 54px;
+      bottom: 46px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chip {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      border: 8px dashed #fff8e0;
+      background: var(--red);
+      box-shadow: 0 7px 0 rgba(0,0,0,.16);
+    }
+
+    .chip:nth-child(2) { background: var(--felt); transform: translateY(-18px); }
+    .chip:nth-child(3) { background: var(--gold); }
+
+    .feedback-lines {
+      display: grid;
+      gap: 18px;
+      font-size: 24px;
+    }
+
+    .line {
+      border-bottom: 2px solid #bdb49b;
+      height: 34px;
+    }
+
+    .controls {
+      width: min(1180px, calc(100vw - 56px));
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      color: #fffdf6;
+      font-size: 15px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.5);
+      background: rgba(255,255,255,.12);
+      color: white;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { background: rgba(255,255,255,.2); }
+
+    .progress {
+      height: 8px;
+      background: rgba(255,255,255,.2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0;
+      background: var(--gold);
+      transition: width .18s ease;
+    }
+
+    .footer {
+      position: absolute;
+      left: 62px;
+      right: 62px;
+      bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #6a746f;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    @media (max-width: 760px) {
+      body { overflow: auto; }
+      .deck { min-height: 100vh; }
+      .slide {
+        width: calc(100vw - 24px);
+        height: auto;
+        min-height: calc(100vh - 98px);
+        padding: 38px 24px 72px;
+        margin: 12px auto 8px;
+      }
+      .grid, .three { grid-template-columns: 1fr; }
+      h1 { font-size: 46px; }
+      h2 { font-size: 32px; }
+      p, ul { font-size: 19px; }
+      table { font-size: 16px; }
+      th, td { padding: 10px; }
+      .chips { right: 24px; bottom: 72px; opacity: .45; }
+      .footer { left: 24px; right: 24px; }
+    }
+
+    @media print {
+      body { background: white; overflow: visible; }
+      .deck { display: block; }
+      .slide {
+        display: flex !important;
+        width: 10in;
+        height: 5.625in;
+        margin: 0;
+        page-break-after: always;
+        box-shadow: none;
+      }
+      .controls { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide hero active">
+      <div class="eyebrow">60-point peer review guide</div>
+      <h1>Poker Game Presentation Rubric</h1>
+      <p>Evaluate poker architecture, AI collaboration, responsible AI, and presentation delivery with clear evidence for every score.</p>
+      <div class="chips"><div class="chip"></div><div class="chip"></div><div class="chip"></div></div>
+      <div class="footer"><span>Poker Game Project</span><span>Slide 1</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Scoring scale</div>
+      <h2>Use the same standard for every criterion.</h2>
+      <table>
+        <tr><th>Points</th><th>Level</th><th>Meaning</th></tr>
+        <tr><td>4-5</td><td>Advanced</td><td>Exceeds expectations; exceptionally clear, detailed, and insightful.</td></tr>
+        <tr><td>3</td><td>Proficient</td><td>Meets all requirements completely and competently.</td></tr>
+        <tr><td>1-2</td><td>Developing</td><td>Partially addresses the criterion but lacks depth, clarity, or completion.</td></tr>
+        <tr><td>0</td><td>Not Demonstrated</td><td>Missing entirely.</td></tr>
+      </table>
+      <div class="footer"><span>Rubric calibration</span><span>Slide 2</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Category 1 - 20 points</div>
+      <h2>Technical Execution & Poker Architecture</h2>
+      <div class="grid">
+        <div class="panel"><h3>Game Logic & OOP</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Variant-Specific Rules</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Live Demo</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Code Readability</h3><div class="score">____ / 5</div></div>
+      </div>
+      <div class="footer"><span>Technical execution</span><span>Slide 3</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Game logic & OOP</div>
+      <h2>Can the audience understand how the game is built?</h2>
+      <div class="score">____ / 5</div>
+      <ul>
+        <li>Explains cards, decks, players, chip pools, and betting rounds.</li>
+        <li>Uses clean structures such as classes, methods, loops, and clear state updates.</li>
+        <li>Shows how game state changes without relying on guesswork.</li>
+      </ul>
+      <div class="footer"><span>Architecture evidence</span><span>Slide 4</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Variant-specific rules</div>
+      <h2>Does the selected poker variant actually work?</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Texas Hold'em</h3>
+          <ul>
+            <li>Community cards</li>
+            <li>Flop, turn, river</li>
+            <li>Accurate 5-out-of-7 evaluation</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>5-Card Draw</h3>
+          <ul>
+            <li>Discard and draw phase</li>
+            <li>Deck depletion handling</li>
+            <li>Accurate hand evaluation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="score">____ / 5</div>
+      <div class="footer"><span>Rules and rankings</span><span>Slide 5</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Demo and readability</div>
+      <h2>Reward working software and understandable code.</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Live Demonstration</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Smooth working demo</li>
+            <li>Graceful bug handling</li>
+            <li>Clear troubleshooting</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Code Readability</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Clean, legible snippets</li>
+            <li>Helpful comments</li>
+            <li>Explained names and logic</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>Execution quality</span><span>Slide 6</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Category 2 - 15 points</div>
+      <h2>AI Transparency & Collaboration</h2>
+      <div class="grid three">
+        <div class="panel"><h3>Prompting Strategy</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Verification</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Contribution Breakdown</h3><div class="score">____ / 5</div></div>
+      </div>
+      <p>Look for evidence that students used AI thoughtfully, tested its output, and retained ownership of final decisions.</p>
+      <div class="footer"><span>AI process</span><span>Slide 7</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Prompting and debugging</div>
+      <h2>Did the team improve AI output through iteration?</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Prompting Strategy</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Specific prompt examples</li>
+            <li>Revisions after weak output</li>
+            <li>Clear prompt-to-code connection</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Verification & Debugging</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Tests beyond visual inspection</li>
+            <li>Hallucination checks</li>
+            <li>Kickers, ties, and split pots verified</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>AI verification</span><span>Slide 8</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Contribution breakdown</div>
+      <h2>Can they separate student work from AI assistance?</h2>
+      <div class="score">____ / 5</div>
+      <ul>
+        <li>Identifies student-written architecture and logic.</li>
+        <li>Identifies AI-generated, optimized, or refactored sections.</li>
+        <li>Explains final technical decisions made by the team.</li>
+      </ul>
+      <div class="footer"><span>Ownership clarity</span><span>Slide 9</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Category 3 - 15 points</div>
+      <h2>Coding Ethics & Responsible AI</h2>
+      <div class="grid three">
+        <div class="panel"><h3>Attribution</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Fairness</h3><div class="score">____ / 5</div></div>
+        <div class="panel"><h3>Broader Implications</h3><div class="score">____ / 5</div></div>
+      </div>
+      <p>Strong projects explain how they used generative tools without hiding risks, limits, or authorship.</p>
+      <div class="footer"><span>Responsible AI</span><span>Slide 10</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Integrity and fairness</div>
+      <h2>Ethical AI use must be visible in the project.</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Attribution</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>AI-generated snippets are acknowledged.</li>
+            <li>Assistance is cited in comments or slides.</li>
+            <li>Students do not claim all generated code as original thought.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Strategic Fairness</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Bot does not inspect hidden cards.</li>
+            <li>Strategy uses visible state or probabilities.</li>
+            <li>Bias and training-data limits are discussed.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>Academic integrity</span><span>Slide 11</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Broader implications</div>
+      <h2>Responsible teams discuss risks beyond their own code.</h2>
+      <div class="score">____ / 5</div>
+      <ul>
+        <li>Technical limitations of modern generative tools.</li>
+        <li>Intellectual property and training-data concerns.</li>
+        <li>Environmental costs of large model usage.</li>
+        <li>Risks of relying on generated code without understanding the logic.</li>
+      </ul>
+      <div class="footer"><span>AI limitations</span><span>Slide 12</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Category 4 - 10 points</div>
+      <h2>Presentation & Communication Skills</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Slide Design & Structure</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Visual, uncluttered slides</li>
+            <li>Logical flow</li>
+            <li>Readable code from the back of the room</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Delivery & Q&A</h3>
+          <div class="score">____ / 5</div>
+          <ul>
+            <li>Clear speaking</li>
+            <li>Balanced team participation</li>
+            <li>Confident technical answers</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>Communication</span><span>Slide 13</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Peer reviewer notes</div>
+      <h2>Capture evidence, not just a score.</h2>
+      <h3>Strongest aspects of this project and presentation</h3>
+      <div class="feedback-lines"><div class="line"></div><div class="line"></div><div class="line"></div></div>
+      <h3>One concrete recommendation for improvement</h3>
+      <div class="feedback-lines"><div class="line"></div><div class="line"></div></div>
+      <div class="footer"><span>Feedback notes</span><span>Slide 14</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Final scoring</div>
+      <h2>Total the evidence-based score.</h2>
+      <table>
+        <tr><th>Category</th><th>Points</th></tr>
+        <tr><td>Technical Execution & Poker Architecture</td><td>____ / 20</td></tr>
+        <tr><td>AI Transparency & Collaboration</td><td>____ / 15</td></tr>
+        <tr><td>Coding Ethics & Responsible AI</td><td>____ / 15</td></tr>
+        <tr><td>Presentation & Communication Skills</td><td>____ / 10</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>____ / 60</strong></td></tr>
+      </table>
+      <div class="footer"><span>Final score</span><span>Slide 15</span></div>
+    </section>
+
+    <nav class="controls" aria-label="Slide controls">
+      <button id="prev" aria-label="Previous slide">Prev</button>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <button id="next" aria-label="Next slide">Next</button>
+      <span id="counter" aria-live="polite"></span>
+    </nav>
+  </main>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const bar = document.getElementById('bar');
+    const counter = document.getElementById('counter');
+    let index = 0;
+
+    function showSlide(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+      bar.style.width = `${((index + 1) / slides.length) * 100}%`;
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      location.hash = `slide-${index + 1}`;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => showSlide(index - 1));
+    document.getElementById('next').addEventListener('click', () => showSlide(index + 1));
+    document.addEventListener('keydown', event => {
+      if (['ArrowRight', 'PageDown', ' '].includes(event.key)) showSlide(index + 1);
+      if (['ArrowLeft', 'PageUp', 'Backspace'].includes(event.key)) showSlide(index - 1);
+      if (event.key === 'Home') showSlide(0);
+      if (event.key === 'End') showSlide(slides.length - 1);
+    });
+
+    const match = location.hash.match(/slide-(\d+)/);
+    showSlide(match ? Number(match[1]) - 1 : 0);
+  </script>
+</body>
+</html>

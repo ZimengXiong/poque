@@ -6,8 +6,6 @@ import {
   LogOut, 
   User, 
   RefreshCw, 
-  Wifi, 
-  WifiOff, 
   Award
 } from 'lucide-react';
 
@@ -248,17 +246,43 @@ function App() {
   return (
     <div className="app-container">
       {/* HEADER COMPONENT */}
-      <header className="app-header glass-panel">
+      <header className="app-header">
         <div className="brand">
-          <span className="brand-logo">P-O-Q-U-E</span>
-          
-          <div className={`mode-badge ${isDemoMode ? 'demo' : 'live'}`}>
-            {isDemoMode ? <WifiOff size={12} /> : <Wifi size={12} />}
-            <span>{isDemoMode ? 'SIMULATOR MODE' : 'LIVE API SERVER'}</span>
-          </div>
+          <span className="brand-logo">POQUE</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Active Mode Status Badge */}
+          <div 
+            onClick={() => handleForceToggleMode(!isDemoMode)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              padding: '6px 12px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              background: isDemoMode ? 'rgba(56, 189, 248, 0.08)' : 'rgba(229, 192, 96, 0.08)',
+              border: isDemoMode ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid rgba(229, 192, 96, 0.25)',
+              color: isDemoMode ? 'var(--accent-cyan)' : 'var(--primary-gold)',
+              transition: 'all 0.2s ease',
+              userSelect: 'none'
+            }}
+            title="Click to toggle gameplay mode"
+          >
+            <span style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: isDemoMode ? 'var(--accent-cyan)' : 'var(--primary-gold)',
+              boxShadow: isDemoMode ? '0 0 8px var(--accent-cyan)' : '0 0 8px var(--primary-gold)',
+              display: 'inline-block'
+            }} />
+            <span>{isDemoMode ? 'SOLO DEMO' : 'LIVE SERVER'}</span>
+          </div>
+
           {isJoined && selfPlayer && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.04)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
               <User size={14} style={{ color: 'var(--primary-gold)' }} />

@@ -800,19 +800,16 @@ input:checked + .toggle-slider:before {
 
 /* Beautiful Cards */
 .card {
-  width: 32px;
-  height: 46px;
+  width: 42px;
+  height: 60px;
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.4);
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 2px 3px;
-  font-weight: 700;
+  font-weight: 800;
   user-select: none;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+  box-sizing: border-box;
 }
 
 .card:hover {
@@ -837,26 +834,37 @@ input:checked + .toggle-slider:before {
   letter-spacing: 0.5px;
 }
 
-.card-top {
+.card-index-tl {
+  position: absolute;
+  top: 3px;
+  left: 4px;
   display: flex;
   flex-direction: column;
-  line-height: 0.95;
+  align-items: center;
+  line-height: 0.9;
   font-size: 10px;
-  align-items: flex-start;
+  font-weight: 800;
 }
 
 .card-center {
-  font-size: 14px;
-  align-self: center;
-  margin-top: -2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  line-height: 1;
 }
 
-.card-bottom {
+.card-index-br {
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
   display: flex;
   flex-direction: column;
-  line-height: 0.95;
+  align-items: center;
+  line-height: 0.9;
   font-size: 10px;
-  align-items: flex-end;
+  font-weight: 800;
   transform: rotate(180deg);
 }
 
@@ -1253,22 +1261,37 @@ input:checked + .toggle-slider:before {
   font-size: 13px;
   border: none;
   border-radius: 6px;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-admin:hover {
   background: var(--gold-hover);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.btn-admin-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-admin-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn-admin-danger {
-  background: #5c1c1c;
-  color: #fca5a5;
-  border: 1px solid #7f1d1d;
+  background: rgba(239, 68, 68, 0.05);
+  color: var(--red);
+  border: 1px solid rgba(239, 68, 68, 0.25);
   font-family: var(--font-family);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   border-radius: 6px;
   padding: 8px;
   cursor: pointer;
@@ -1276,8 +1299,66 @@ input:checked + .toggle-slider:before {
 }
 
 .btn-admin-danger:hover {
-  background: #7f1d1d;
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
 }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-group.full-width {
+  grid-column: span 2;
+}
+
+/* Dashboard Status Cards */
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.status-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-card-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.status-card-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.system-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.system-actions-grid .full-width {
+  grid-column: span 2;
+}
+
 
 /* Sidebar Spectator list */
 .spectator-list {
@@ -1419,7 +1500,6 @@ input:checked + .toggle-slider:before {
 <header>
   <div class="brand-section">
     <div class="brand-logo">poque</div>
-    <div class="brand-badge">Developer Suite</div>
   </div>
   
   <div class="header-controls">
@@ -1488,9 +1568,9 @@ input:checked + .toggle-slider:before {
   <div class="right-panel">
     <!-- Hand Controls panel -->
     <div class="panel-section">
-      <div class="panel-title">Hand Configurations</div>
+      <div class="panel-title">Game Controller</div>
       <div class="admin-form">
-        <div class="form-row">
+        <div class="form-grid">
           <div class="form-group">
             <label for="sb-input">Small Blind</label>
             <input type="number" id="sb-input" value="10" min="1">
@@ -1499,32 +1579,49 @@ input:checked + .toggle-slider:before {
             <label for="bb-input">Big Blind</label>
             <input type="number" id="bb-input" value="20" min="1">
           </div>
-          <div class="form-group">
-            <label for="stack-input">Stack size</label>
+          <div class="form-group full-width">
+            <label for="stack-input">Starting Stack</label>
             <input type="number" id="stack-input" value="1000" min="10">
           </div>
         </div>
         
-        <button class="btn-admin" onclick="startHand()" id="btn-deal-hand">Deal Next Hand</button>
-        <button class="btn-admin" onclick="restartHand()" style="margin-top: 8px;">Restart Hand</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+          <button class="btn-admin" onclick="startHand()" id="btn-deal-hand">Deal Next Hand</button>
+          <button class="btn-admin btn-admin-secondary" onclick="restartHand()">Restart Hand</button>
+        </div>
       </div>
     </div>
     
     <!-- Room State panel -->
     <div class="panel-section">
-      <div class="panel-title">
-        <span>Room Details</span>
-        <span style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
-          <button class="btn-admin-danger" onclick="endHand()" style="padding: 2px 8px; font-size: 10px;">Force End Hand</button>
-          <button class="btn-admin-danger" onclick="resetRoom()" style="padding: 2px 8px; font-size: 10px;">Full Reset</button>
-          <button class="btn-admin-danger" onclick="restartBackend()" style="padding: 2px 8px; font-size: 10px;">Restart Backend</button>
-        </span>
+      <div class="panel-title">Dashboard</div>
+      <div class="status-grid">
+        <div class="status-card">
+          <span class="status-card-label">Stage</span>
+          <span class="status-card-value" id="stage-val" style="text-transform: uppercase; color: var(--gold);">lobby</span>
+        </div>
+        <div class="status-card">
+          <span class="status-card-label">Hand ID</span>
+          <span class="status-card-value" id="hand-val">-</span>
+        </div>
+        <div class="status-card">
+          <span class="status-card-label">Viewer ID</span>
+          <span class="status-card-value" id="viewer-val" style="font-family: 'Fira Code', monospace; font-size: 11px;">-</span>
+        </div>
+        <div class="status-card">
+          <span class="status-card-label">Turn Owner</span>
+          <span class="status-card-value" id="actor-val" style="color: var(--green);">-</span>
+        </div>
       </div>
-      <div style="font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: var(--text-secondary);">
-        <div>Stage: <strong id="stage-val" style="color: white; text-transform: uppercase;">lobby</strong></div>
-        <div>Hand ID: <strong id="hand-val" style="color: white;">-</strong></div>
-        <div>Viewer ID: <strong id="viewer-val" style="color: white; font-family: 'Fira Code', monospace;">-</strong></div>
-        <div>Turn Owner: <strong id="actor-val" style="color: white;">-</strong></div>
+      
+      <!-- System / Admin Tools Grid -->
+      <div style="margin-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 12px;">
+        <span class="status-card-label" style="display: block; margin-bottom: 8px;">System Actions</span>
+        <div class="system-actions-grid">
+          <button class="btn-admin-danger" onclick="endHand()">Force End Hand</button>
+          <button class="btn-admin-danger" onclick="resetRoom()">Full Reset</button>
+          <button class="btn-admin-danger full-width" onclick="restartBackend()" style="margin-top: 4px;">Restart Backend Process</button>
+        </div>
       </div>
     </div>
     
@@ -1897,14 +1994,14 @@ function renderCard(cardStr) {
   
   return `
     <div class="card ${suit.color}">
-      <div class="card-top">
-        <span class="card-rank">${displayRank}</span>
-        <span class="card-suit" style="margin-top:-2px;">${suit.symbol}</span>
+      <div class="card-index-tl">
+        <span>${displayRank}</span>
+        <span style="font-size: 8px; margin-top: 1px;">${suit.symbol}</span>
       </div>
       <div class="card-center">${suit.symbol}</div>
-      <div class="card-bottom">
-        <span class="card-suit" style="margin-top:-2px;">${suit.symbol}</span>
-        <span class="card-rank">${displayRank}</span>
+      <div class="card-index-br">
+        <span>${displayRank}</span>
+        <span style="font-size: 8px; margin-top: 1px;">${suit.symbol}</span>
       </div>
     </div>
   `;
@@ -1956,8 +2053,19 @@ function clearFeed() {
   document.getElementById('feed-list-el').innerHTML = `<div class="empty-feed">Ledger cleared</div>`;
 }
 
+let lastRenderedStateJson = '';
+let lastPossessedPlayerId = '';
+
 // Render dynamic components
 function render(s) {
+  // Prevent flickering by skipping render if state and viewer are completely unchanged
+  const currentStateJson = JSON.stringify(s);
+  if (currentStateJson === lastRenderedStateJson && possessedPlayerId === lastPossessedPlayerId) {
+    return;
+  }
+  lastRenderedStateJson = currentStateJson;
+  lastPossessedPlayerId = possessedPlayerId;
+
   // Update details
   document.getElementById('stage-val').textContent = s.stage;
   document.getElementById('hand-val').textContent = s.hand_number || '-';
