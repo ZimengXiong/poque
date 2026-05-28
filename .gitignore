@@ -1,3 +1,6 @@
 __pycache__/
 .antigravitycli/
 *.pyc
+client-web/node_modules/
+client-web/dist/
+client-web/data/

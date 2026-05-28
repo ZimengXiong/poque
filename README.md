@@ -8,6 +8,21 @@ Public endpoints:
 - `https://poque.v3c.dev/admin`
 - `https://poque.v3c.dev/mvpclient.sh`
 - `https://poque.v3c.dev/poque.sh`
+- `https://client.v3c.dev`
+
+## Web client
+
+The React/Vite browser client lives in `client-web/`. It includes:
+
+- `src/`: frontend table UI.
+- `server.cjs`: small Node server that serves the built client, proxies `/api/*` to `poque.v3c.dev`, and keeps browser session mappings under `data/sessions.json`.
+- `compose.yaml`: service definition for the live `poque-client` container.
+
+The live route is configured outside this repo in the v3c Caddy config:
+
+```text
+client.v3c.dev -> poque-client:3000
+```
 
 ## API
 

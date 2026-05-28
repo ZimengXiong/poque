@@ -1,0 +1,31 @@
+name: v3c-poque-client
+
+services:
+  poque-client:
+    image: node:22-bookworm-slim
+    container_name: poque-client
+    working_dir: /app
+    command: sh -c "npm ci && npm run build && node server.cjs"
+    restart: unless-stopped
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - .:/app
+    environment:
+      PORT: 3000
+      POQUE_API: https://poque.v3c.dev
+      DATA_FILE: /app/data/sessions.json
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:3000/session/status', (res) => process.exit(res.statusCode === 200 ? 0 : 1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+networks:
+  proxy:
+    external: true
